@@ -8,6 +8,7 @@ current prelinked ApplePMGR vtable.
 """
 import hashlib
 import json
+import shutil
 import struct
 import subprocess
 import sys
@@ -68,9 +69,13 @@ compile_cpp(pmgr_source, pmgr_raw)
 glue = out / 'ShengPlatformPowerGlue.o'
 compile_cpp(ROOT / 'scripts/ShengPlatformPowerGlue.cpp', glue)
 
-llvm_objcopy = Path('/opt/local/libexec/llvm-20/bin/llvm-objcopy')
+llvm_objcopy = Path(shutil.which('llvm-objcopy') or '/usr/local/opt/llvm/bin/llvm-objcopy')
+if not llvm_objcopy.is_file():
+    llvm_objcopy = Path('/opt/homebrew/opt/llvm/bin/llvm-objcopy')
 if not llvm_objcopy.is_file():
     llvm_objcopy = Path('/opt/local/bin/llvm-objcopy')
+if not llvm_objcopy.is_file():
+    raise SystemExit('llvm-objcopy not found; brew install llvm')
 pmgr_late = out / 'DumplingPlatformPower.late.o'
 subprocess.run([str(llvm_objcopy), '--remove-section=__DATA,__mod_init_func',
                 '--globalize-symbol=__GLOBAL__sub_I_DumplingPlatformPower.cpp',

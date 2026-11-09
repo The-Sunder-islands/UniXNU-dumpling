@@ -7,10 +7,10 @@
 // contains no ApplePMGR code and no hardware access.
 #include <sys/types.h>
 
-volatile int native_owner_data_status = -1;
-volatile int native_owner_data_readonly = -1;
-volatile dev_t native_owner_data_device = -1;
+__attribute__((weak)) volatile int native_owner_data_status = -1;
+__attribute__((weak)) volatile int native_owner_data_readonly = -1;
+__attribute__((weak)) volatile dev_t native_owner_data_device = -1;
 
-void native_panic_flush(void)
+__attribute__((weak)) void native_panic_flush(void)
 {
 }

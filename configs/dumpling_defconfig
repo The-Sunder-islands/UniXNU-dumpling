@@ -30,6 +30,9 @@ CONFIG_XNU_CRYPTO_BOOTSTRAP="source"
 # CONFIG_XNU_NATIVE_LEGACY_DISPLAY is not set
 # CONFIG_XNU_BOOT_PROGRESS is not set
 CONFIG_XNU_NATIVE_RAM_BLOCK=y
+# NativeRamBlock's guard requires the NativeAES/original-storage closure even
+# when no Data volume is mounted; the archive builder is in board.toml.
+CONFIG_XNU_NATIVE_AES=y
 # CONFIG_XNU_NATIVE_UFS is not set
 CONFIG_XNU_NATIVE_UFS_PROBE=y
 # CONFIG_XNU_NATIVE_ADRENO is not set

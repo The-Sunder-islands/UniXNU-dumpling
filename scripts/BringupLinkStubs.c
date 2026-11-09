@@ -53,3 +53,17 @@ __attribute__((weak)) volatile uint32_t native_legacy_transfer_calls = 0;
 __attribute__((weak)) volatile uint32_t native_legacy_frame_count = 0;
 __attribute__((weak)) volatile uint32_t native_legacy_frame_kind[32] = { 0 };
 __attribute__((weak)) volatile uint64_t native_legacy_frame_stats[32][5] = { { 0 } };
+
+/*
+ * A540 Adreno ABI counters referenced by the same NativeUfsProbe diagnostic
+ * block.  The first UFS root test does not link the Adreno archive; zeroed
+ * weak definitions keep the report path inert.
+ */
+__attribute__((weak)) volatile int native_a540_abi_calls = 0;
+__attribute__((weak)) volatile int native_a540_abi_last_method = 0;
+__attribute__((weak)) volatile int native_a540_abi_reports = 0;
+__attribute__((weak)) char native_a540_abi_report[64] = { 0 };
+__attribute__((weak)) volatile uint32_t native_a540_open_count = 0;
+__attribute__((weak)) volatile uint32_t native_a540_open_type = 0;
+__attribute__((weak)) volatile uint32_t native_a540_sel_count = 0;
+__attribute__((weak)) volatile uint32_t native_a540_sel_last = 0;

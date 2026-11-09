@@ -54,7 +54,8 @@ archives = [
   "build-arm-driver.py NativeAES",
   "build-arm-driver.py NativeVirtioBlock",
   "build-arm-driver.py NativeRamBlock",
-  "build-arm-driver.py NativeUfsProbe",
+  # B5: the UFS probe pulls in GPU/RamBlock symbols; not needed for B3.
+  # "build-arm-driver.py NativeUfsProbe",
   # B5: requires signed VerifiedRoot policies (build/verified-root-os/*).
   # Not needed for the first B3 kernel boot; re-enable at the UFS/APFS stage.
   # "build-native-ufs-runtime.py",

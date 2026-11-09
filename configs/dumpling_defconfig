@@ -1,9 +1,9 @@
 # Kernel configuration of the OnePlus 5T image. CONFIG_XNU_<NAME> becomes XNU_<NAME> for the
 # kernel build.
 #
-# B3 starts with the smallest set that can reach a panic: the DT platform expert, the timer and
-# the mock/ram block stack.  NativeUfs, Adreno, PMGR, PAN and MobileDisplay stay off until their
-# own milestones (B4/B5/B7).
+# B4/P4: the UFS warm-link probe reads the SHNGROOT OS/SystemOS windows from the
+# userdata partition, and NativeRamBlock supplies the packed scratch Data seed.
+# mockfs remains the fallback root; Adreno, PAN and MobileDisplay stay off.
 
 CONFIG_XNU_BUILD_ARCHIVES=y
 CONFIG_XNU_SOURCE_CORECRYPTO14=y
@@ -29,13 +29,19 @@ CONFIG_XNU_CRYPTO_BOOTSTRAP="source"
 # uses boot_args->Video from DarwinBoot and needs no extra kit.
 # CONFIG_XNU_NATIVE_LEGACY_DISPLAY is not set
 # CONFIG_XNU_BOOT_PROGRESS is not set
-# B3 has no Data volume and uses source corecrypto, so NativeRamBlock's
-# NativeAES/prelinked guard cannot be satisfied yet.  Keep only mockfs.
-# CONFIG_XNU_NATIVE_RAM_BLOCK is not set
+# P4: the packed Data seed is published by NativeRamBlock; the
+# OWNER_DATA_MOUNT path mounts it at /private/var.  Source crypto is kept, so
+# the NativeRamBlock guard is satisfied through OWNER_DATA_MOUNT=1 rather than
+# the NativeAES/prelinked closure.
+CONFIG_XNU_NATIVE_RAM_BLOCK=y
 # CONFIG_XNU_NATIVE_AES is not set
 # CONFIG_XNU_NATIVE_UFS is not set
-# B3 first boot does not need the UFS probe; it pulls in B5 GPU/RamBlock symbols.
-# CONFIG_XNU_NATIVE_UFS_PROBE is not set
+# Warm-link UFS probe: read the 5T userdata GPT and the SHNGROOT OS/SystemOS
+# windows.  This is the Probe path, not the full NativeUfs runtime.
+CONFIG_XNU_NATIVE_UFS_PROBE=y
+# Mount the packed Data seed at /private/var; the workflow sets
+# XNU_OWNER_DATA_VOLATILE=1 and the skeleton's volume UUID.
+CONFIG_XNU_OWNER_DATA_MOUNT=y
 # CONFIG_XNU_NATIVE_ADRENO is not set
 CONFIG_XNU_SHENG_PMGR=y
 # CONFIG_XNU_NATIVE_PAN is not set

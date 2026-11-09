@@ -83,9 +83,13 @@ native_source = out / 'NativeUfs.cpp'
 shutil.copyfile(ROOT / 'scripts/NativeUfsWarm.cpp', native_source)
 native_obj = compile_source(native_source, 'NativeUfs', cpp_record,
                common + ['-DNATIVE_VERIFIED_BLOCK=1', '-DNATIVE_VERIFIED_BLOCK_MULTI_POLICY=1', '-DVR_HASH_BYTES=8'])
-llvm_objcopy = Path('/opt/local/libexec/llvm-20/bin/llvm-objcopy')
+llvm_objcopy = Path(shutil.which('llvm-objcopy') or '/usr/local/opt/llvm/bin/llvm-objcopy')
+if not llvm_objcopy.is_file():
+    llvm_objcopy = Path('/opt/homebrew/opt/llvm/bin/llvm-objcopy')
 if not llvm_objcopy.is_file():
     llvm_objcopy = Path('/opt/local/bin/llvm-objcopy')
+if not llvm_objcopy.is_file():
+    raise SystemExit('llvm-objcopy not found; brew install llvm')
 native_late = out / 'NativeUfs.late.o'
 subprocess.run([str(llvm_objcopy), '--remove-section=__DATA,__mod_init_func',
                 '--globalize-symbol=__GLOBAL__sub_I_NativeUfs.cpp',

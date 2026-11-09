@@ -1,0 +1,43 @@
+## @file
+#  Publish the Android boot image initrd as a read-only block device.
+#
+#  Derived from the OnePlus 5 (cheeseburger) port; the initrd handoff is
+#  board-independent on MSM8998.  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010019
+  BASE_NAME                      = DumplingBootMemoryDxe
+  FILE_GUID                      = DCF5939B-9F93-42C9-907C-2C0F1C817005
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = DumplingBootMemoryDxeEntry
+
+[Sources]
+  DumplingBootMemoryDxe.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  EmbeddedPkg/EmbeddedPkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  DebugLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  UefiLib
+  IoLib
+  FdtLib
+
+[Guids]
+  gEfiEventExitBootServicesGuid
+
+[Protocols]
+  gEfiBlockIoProtocolGuid                       ## PRODUCES
+  gEfiDevicePathProtocolGuid                    ## PRODUCES
+
+[Depex]
+  TRUE

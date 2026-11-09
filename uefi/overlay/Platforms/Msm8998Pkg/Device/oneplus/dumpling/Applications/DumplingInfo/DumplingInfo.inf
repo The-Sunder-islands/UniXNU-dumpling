@@ -1,0 +1,35 @@
+## @file
+#  Print the board facts the first device test has to confirm.
+#
+#  Built into this platform's components but not listed in the FDF: UniXNU
+#  launches it from the payload ESP so the firmware under test stays fixed.
+#  SPDX-License-Identifier: BSD-2-Clause-Patent
+##
+
+[Defines]
+  INF_VERSION    = 0x00010005
+  BASE_NAME      = DumplingInfo
+  FILE_GUID      = 08891A4D-61D9-4A70-8771-E1939950D5EF
+  MODULE_TYPE    = UEFI_APPLICATION
+  VERSION_STRING = 1.0
+  ENTRY_POINT    = DumplingInfoEntry
+
+[Sources]
+  DumplingInfo.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  PrintLib
+  UefiApplicationEntryPoint
+  UefiBootServicesTableLib
+  UefiLib
+
+[Protocols]
+  gEfiBlockIoProtocolGuid
+  gEfiGraphicsOutputProtocolGuid

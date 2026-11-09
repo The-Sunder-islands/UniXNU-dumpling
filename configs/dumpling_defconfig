@@ -1,0 +1,40 @@
+# Kernel configuration of the OnePlus 5T image. CONFIG_XNU_<NAME> becomes XNU_<NAME> for the
+# kernel build.
+#
+# B3 starts with the smallest set that can reach a panic: the DT platform expert, the timer and
+# the mock/ram block stack.  NativeUfs, Adreno, PMGR, PAN and MobileDisplay stay off until their
+# own milestones (B4/B5/B7).
+
+CONFIG_XNU_BUILD_ARCHIVES=y
+CONFIG_XNU_SOURCE_CORECRYPTO14=y
+CONFIG_XNU_SOURCE_PTHREAD=y
+CONFIG_XNU_ARM_DT_PLATFORM=y
+CONFIG_XNU_ARMCPU=y
+CONFIG_XNU_NATIVE_ARCH_TIMER=y
+CONFIG_XNU_NATIVE_CS_HASH_CACHE=y
+# The BCM2837 panic-log address (0x3c0fc000) is not an MSM8998 region; use
+# /pram + /chosen/embedded-panic-log-size from the ADT instead.
+CONFIG_XNU_DT_PANIC_REGION=y
+# B3 has no registered img4if/amfi provider at trust_cache_init time yet.
+# Re-enable when the AppleImage4/AMFI prelink initialization order is qualified.
+# CONFIG_XNU_TRUST_CACHE_RUNTIME is not set
+CONFIG_XNU_SOURCE_MOCKFS=y
+
+# B3 has no prelinked corecrypto OSKext startup before kmem_crypto_init();
+# use the source bootstrap registered at STARTUP(EARLY_BOOT, FIRST).
+CONFIG_XNU_CRYPTO_BOOTSTRAP="source"
+
+# Not yet:
+# The legacy display kit is for IOMobileFramebuffer/userland (B7); the B3 kernel console
+# uses boot_args->Video from DarwinBoot and needs no extra kit.
+# CONFIG_XNU_NATIVE_LEGACY_DISPLAY is not set
+# CONFIG_XNU_BOOT_PROGRESS is not set
+CONFIG_XNU_NATIVE_RAM_BLOCK=y
+# CONFIG_XNU_NATIVE_UFS is not set
+CONFIG_XNU_NATIVE_UFS_PROBE=y
+# CONFIG_XNU_NATIVE_ADRENO is not set
+CONFIG_XNU_SHENG_PMGR=y
+# CONFIG_XNU_NATIVE_PAN is not set
+# CONFIG_XNU_NATIVE_MOBILE_DISPLAY is not set
+# CONFIG_XNU_NATIVE_VIRTIO_BLOCK is not set
+# CONFIG_XNU_VERIFIED_ROOT_PROBE is not set

@@ -42,6 +42,13 @@ CONFIG_XNU_NATIVE_UFS_PROBE=y
 # Mount the packed Data seed at /private/var; the workflow sets
 # XNU_OWNER_DATA_VOLATILE=1 and the skeleton's volume UUID.
 CONFIG_XNU_OWNER_DATA_MOUNT=y
+# P4.5: mount the SystemOS cryptex at /private/preboot and let dyld use its
+# shared cache.  XNU_BRINGUP_CACHE_MOUNT=1 in the workflow satisfies the
+# development-only root-trust build guard; the carrier accepts the cache file
+# on the SystemOS mount.
+CONFIG_XNU_OWNER_CACHE_MOUNT=y
+CONFIG_XNU_OWNER_CACHE_STARTUP=y
+CONFIG_XNU_OWNER_CACHE_CARRIER=y
 # CONFIG_XNU_NATIVE_ADRENO is not set
 CONFIG_XNU_SHENG_PMGR=y
 # CONFIG_XNU_NATIVE_PAN is not set

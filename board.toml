@@ -55,7 +55,9 @@ archives = [
   "build-arm-driver.py NativeVirtioBlock",
   "build-arm-driver.py NativeRamBlock",
   "build-arm-driver.py NativeUfsProbe",
-  "build-native-ufs-runtime.py",
+  # B5: requires signed VerifiedRoot policies (build/verified-root-os/*).
+  # Not needed for the first B3 kernel boot; re-enable at the UFS/APFS stage.
+  # "build-native-ufs-runtime.py",
   "build-sheng-pmgr.py",
   "build-mockfs-fixture.py",
   "build-libpthread-kernel.py",

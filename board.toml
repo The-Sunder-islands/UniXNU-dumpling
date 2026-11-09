@@ -116,6 +116,10 @@ dram_size = "0x200000000"
 panic_screen = false                # H67: skip fixed panic cave; use kernel console
 kernel_args = [
   "-v",
+  # B3.5 mockfs RAM root: DarwinBoot loads Payloads/scratch-data.img into
+  # /chosen/memory-map/RAMDisk, and IOFindBSDRoot selects md0.  Remove this
+  # when the UFS/APFS root replaces mockfs.
+  "rd=md0",
   # DinnerABC's successful iPadOS 17.7.11 baseline runs a single CPU.
   "cpus=1",
   "debug=0x14e",

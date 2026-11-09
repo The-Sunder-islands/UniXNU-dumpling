@@ -18,6 +18,16 @@ ROOT = Path(__file__).resolve().parents[1]
 out = ROOT / 'build/sheng-platform-power'
 out.mkdir(parents=True, exist_ok=True)
 
+# The real provider needs the original ApplePMGR vtable from a prelinked
+# kernel.  A fresh kernel build reaches the archive builders before the first
+# prelink exists, so that pass must use the stub.  The CI runs "build kernel"
+# a second time after the prelink; this script then builds the real archive.
+kernel_path = ROOT.parent / 'kernel/kernel.macho'
+if not kernel_path.is_file():
+    print('build-sheng-pmgr: no prelinked kernel yet; building the B3 stub for the bootstrap pass')
+    subprocess.run([sys.executable, str(ROOT / 'scripts/build-sheng-pmgr-stub.py')], check=True)
+    raise SystemExit(0)
+
 header = '''// Generated exact ApplePMGR provider ABI; private fields stay opaque.
 #pragma once
 #include <IOKit/IOPMGR.h>
@@ -98,7 +108,6 @@ bindings = {name: value + delta for name, value in reference.items()}
 # current pointers from the prelinked kernel rather than fabricating them.
 sys.path.insert(0, str(ROOT / 'kits/NativePrelink'))
 import native_prelink as np  # noqa: E402
-kernel_path = ROOT.parent / 'kernel/kernel.macho'
 image_data = kernel_path.read_bytes()
 image = np.macho(image_data)
 vtable_slot = bindings['__ZTV9ApplePMGR'] + 16
@@ -115,12 +124,21 @@ binding_object = out / 'original-bindings.o'
 subprocess.run(['xcrun', 'clang', '-target', 'arm64-apple-ios17.0', '-isysroot', sdk,
                 '-c', str(assembly), '-o', str(binding_object)], check=True)
 
+# B3 link-only globals shared with the stub archive.  The real PMGR runtime
+# replaces sheng_pmgr_run(), not the owner-Data/panic definitions.
+bringup_source = ROOT / 'scripts/BringupLinkStubs.c'
+bringup_object = out / 'BringupLinkStubs.o'
+subprocess.run(['xcrun', 'clang', '-target', 'arm64-apple-ios17.0', '-isysroot', sdk,
+                '-Wall', '-Wextra', '-Werror', '-c', str(bringup_source), '-o', str(bringup_object)], check=True)
+
 archive = out / 'libShengPlatformPower.a'
 archive.unlink(missing_ok=True)
-subprocess.run(['xcrun', 'ar', 'rcs', str(archive), str(pmgr_late), str(glue), str(binding_object)], check=True)
+subprocess.run(['xcrun', 'ar', 'rcs', str(archive), str(pmgr_late), str(glue),
+                str(binding_object), str(bringup_object)], check=True)
 report = dict(result='SHENG_PMGR_RUNTIME_BUILD_PASS',
               archive_sha256=hashlib.sha256(archive.read_bytes()).hexdigest(),
               source_sha256=hashlib.sha256(pmgr_source.read_bytes()).hexdigest(),
+              bringup_source_sha256=hashlib.sha256(bringup_source.read_bytes()).hexdigest(),
               bindings={name: hex(value) for name, value in bindings.items()},
               reference_slide=-0xc2d000, board_slide=0x5000000, hardware_tested=False)
 (out / 'build-report.json').write_text(json.dumps(report, indent=2) + '\n')

@@ -59,9 +59,10 @@ archives = [
   # B5: requires signed VerifiedRoot policies (build/verified-root-os/*).
   # Not needed for the first B3 kernel boot; re-enable at the UFS/APFS stage.
   # "build-native-ufs-runtime.py",
-  # B3: stub only supplies sheng_pmgr_run; the full PMGR needs the prelinked
-  # kernel.macho.  Switch back to build-sheng-pmgr.py after prelink.
-  "build-sheng-pmgr-stub.py",
+  # B3: the real ApplePMGR provider needs the prelinked kernel.macho.  The
+  # script falls back to the stub on the first pass; the CI runs "build
+  # kernel" a second time after the prelink to build the real archive.
+  "build-sheng-pmgr.py",
   "build-mockfs-fixture.py",
   "build-libpthread-kernel.py",
 ]
@@ -157,9 +158,10 @@ tool = "scripts/make-dumpling-adt.py"
 # route identity.
 cpu_regs = "0,1,2,3,0x100,0x101,0x102,0x103"
 psci_method = "smc"
-# 4 GiB DarwinBoot window.  UEFI reports 7839 MiB total on this 8 GB unit,
-# so the window fits; revisit if a 6 GB unit is used.
-owned_memory_size = "0x100000000"
+# 3.75 GiB DarwinBoot window.  The first 4 GiB attempt failed: DarwinBoot
+# reported "NO WINDOW 100000000" and the largest free run was 0xFCCC0000
+# (~3.95 GiB) at 0x180000000.  0xF0000000 fits with headroom.
+owned_memory_size = "0xF0000000"
 ipad_identity = true
 # Packed DBRDISK1 Data seed: the logical Data disk is larger than the payload
 # file, so core dumps and launchd state do not exhaust a small raw seed.

@@ -58,7 +58,9 @@ archives = [
   # B5: requires signed VerifiedRoot policies (build/verified-root-os/*).
   # Not needed for the first B3 kernel boot; re-enable at the UFS/APFS stage.
   # "build-native-ufs-runtime.py",
-  "build-sheng-pmgr.py",
+  # B3: stub only supplies sheng_pmgr_run; the full PMGR needs the prelinked
+  # kernel.macho.  Switch back to build-sheng-pmgr.py after prelink.
+  "build-sheng-pmgr-stub.py",
   "build-mockfs-fixture.py",
   "build-libpthread-kernel.py",
 ]

@@ -34,7 +34,8 @@ CONFIG_XNU_CRYPTO_BOOTSTRAP="source"
 # CONFIG_XNU_NATIVE_RAM_BLOCK is not set
 # CONFIG_XNU_NATIVE_AES is not set
 # CONFIG_XNU_NATIVE_UFS is not set
-CONFIG_XNU_NATIVE_UFS_PROBE=y
+# B3 first boot does not need the UFS probe; it pulls in B5 GPU/RamBlock symbols.
+# CONFIG_XNU_NATIVE_UFS_PROBE is not set
 # CONFIG_XNU_NATIVE_ADRENO is not set
 CONFIG_XNU_SHENG_PMGR=y
 # CONFIG_XNU_NATIVE_PAN is not set

@@ -54,8 +54,9 @@ archives = [
   "build-arm-driver.py NativeAES",
   "build-arm-driver.py NativeVirtioBlock",
   "build-arm-driver.py NativeRamBlock",
-  # B5: the UFS probe pulls in GPU/RamBlock symbols; not needed for B3.
-  # "build-arm-driver.py NativeUfsProbe",
+  # P4: warm-link UFS probe reads the SHNGROOT OS/SystemOS windows from the
+  # 5T userdata partition and publishes them as IOMedia windows.
+  "build-arm-driver.py NativeUfsProbe",
   # B5: requires signed VerifiedRoot policies (build/verified-root-os/*).
   # Not needed for the first B3 kernel boot; re-enable at the UFS/APFS stage.
   # "build-native-ufs-runtime.py",
@@ -116,10 +117,13 @@ dram_size = "0x200000000"
 panic_screen = false                # H67: skip fixed panic cave; use kernel console
 kernel_args = [
   "-v",
-  # B3.5 mockfs RAM root: DarwinBoot loads Payloads/scratch-data.img into
-  # /chosen/memory-map/RAMDisk, and IOFindBSDRoot selects md0.  Remove this
-  # when the UFS/APFS root replaces mockfs.
-  "rd=md0",
+  # P4: the UFS warm-link probe publishes the OS/SystemOS windows; the ADT
+  # root-matching UUID selects the APFS OS volume.  Keep the root-auth bypass
+  # for the first bring-up root.
+  "allow-root-hash-mismatch=1",
+  # Do not write the persistent UFS log into the tail of the 5T userdata
+  # during the first root test.
+  "h103-slot=0",
   # DinnerABC's successful iPadOS 17.7.11 baseline runs a single CPU.
   "cpus=1",
   "debug=0x14e",
@@ -167,9 +171,8 @@ psci_method = "smc"
 # (~3.95 GiB) at 0x180000000.  0xF0000000 fits with headroom.
 owned_memory_size = "0xF0000000"
 ipad_identity = true
-# Packed DBRDISK1 Data seed: the logical Data disk is larger than the payload
-# file, so core dumps and launchd state do not exhaust a small raw seed.
+# P4: packed DBRDISK1 Data seed published by NativeRamBlock and mounted at
+# /private/var.  The OS/SystemOS root comes from the UFS windows.
 packed_data_ramdisk = true
 # Root selection: the OS window's APFS volume UUID in the iPad7,1 fixture.
-# This is read-only root media; Data is a separate later task.
 root_match_volume_uuid = "04769D26-2CA0-4825-B443-E2E5F88300F2"

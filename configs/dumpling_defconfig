@@ -29,10 +29,10 @@ CONFIG_XNU_CRYPTO_BOOTSTRAP="source"
 # uses boot_args->Video from DarwinBoot and needs no extra kit.
 # CONFIG_XNU_NATIVE_LEGACY_DISPLAY is not set
 # CONFIG_XNU_BOOT_PROGRESS is not set
-CONFIG_XNU_NATIVE_RAM_BLOCK=y
-# NativeRamBlock's guard requires the NativeAES/original-storage closure even
-# when no Data volume is mounted; the archive builder is in board.toml.
-CONFIG_XNU_NATIVE_AES=y
+# B3 has no Data volume and uses source corecrypto, so NativeRamBlock's
+# NativeAES/prelinked guard cannot be satisfied yet.  Keep only mockfs.
+# CONFIG_XNU_NATIVE_RAM_BLOCK is not set
+# CONFIG_XNU_NATIVE_AES is not set
 # CONFIG_XNU_NATIVE_UFS is not set
 CONFIG_XNU_NATIVE_UFS_PROBE=y
 # CONFIG_XNU_NATIVE_ADRENO is not set
